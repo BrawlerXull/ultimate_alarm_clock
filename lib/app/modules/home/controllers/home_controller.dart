@@ -211,6 +211,19 @@ class HomeController extends GetxController with AlarmHandlerSetupModel {
           alarmRecord, isarLatestAlarm, firestoreLatestAlarm, latestAlarm);
 
       if (latestAlarm.minutesSinceMidnight > -1) {
+        DateTime now = DateTime.now();
+        DateTime nextMinute =
+            DateTime(now.year, now.month, now.day, now.hour, now.minute + 1);
+        Duration delay = nextMinute.difference(now).inMilliseconds > 0
+            ? nextMinute.difference(now)
+            : Duration.zero;
+        timeToAlarm = Utils.timeUntilAlarm(
+            Utils.stringToTimeOfDay(latestAlarm.alarmTime), latestAlarm.days);
+        alarmTime.value = "Rings in $timeToAlarm";
+        await Future.delayed(delay);
+        timeToAlarm = Utils.timeUntilAlarm(
+            Utils.stringToTimeOfDay(latestAlarm.alarmTime), latestAlarm.days);
+        alarmTime.value = "Rings in $timeToAlarm";
         // Starting timer for live refresh
         _timer = Timer.periodic(
             Duration(
